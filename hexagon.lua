@@ -46,4 +46,4 @@ end
 
 -- some globals
 hrad = 25
-hexp = hex_path(hrad, true)
+hexp = hex_path(hrad, false)

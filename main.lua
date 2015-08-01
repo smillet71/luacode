@@ -1,10 +1,11 @@
 require('lovedebug')
 require "hexagon"
 
--- coordonnées pointées par la souris
+-- quelques variables globales...
 xm = 0
 ym = 0
 click = false
+hexSel = nil
 
 -- distance entre 2 points x, y
 function dist2d(x0, y0, x1, y1)
@@ -62,15 +63,24 @@ end
 
 -- This function is called exactly once at the beginning of the game.   
 function love.load(arg)
-   local modes = love.window.getFullscreenModes()
-   table.sort(modes, function(a, b) return a.width*a.height < b.width*b.height end)
-   for i=1,#modes do
+	-- gestion mode graphique
+	local modes = love.window.getFullscreenModes()
+	table.sort(modes, function(a, b) return a.width*a.height < b.width*b.height end)
+	for i=1,#modes do
       print("mode ",i,": ", modes[i].width, modes[i].height)
-   end
-   display_mode = modes[#modes]
-   love.window.setMode(display_mode.width, display_mode.height, {resizable=false, fullscreen=true})
-   love.resize(love.window.getWidth(), love.window.getHeight())
-   love.graphics.setFont(love.graphics.newFont(9))
+	end
+	display_mode = modes[#modes]
+	love.window.setMode(display_mode.width, display_mode.height, {resizable=false, fullscreen=true})
+	love.resize(love.window.getWidth(), love.window.getHeight())
+	love.graphics.setFont(love.graphics.newFont(9))
+	-- constantes affichage
+	nh = math.floor(math.floor((display_mode.height/(hrad*math.sqrt(3))-3))/2)
+	-- hexmap graphics limits
+	hexmap_x = display_mode.width/2-hrad*math.sqrt(3)*(nh-0.75)
+	hexmap_y = display_mode.height/2-hrad*math.sqrt(3)*(nh+0.5)
+	hexmap_width = hrad*math.sqrt(3)*(nh-0.75)*2
+	hexmap_height = hrad*math.sqrt(3)*(nh+0.75)*2
+	-- constantes gestion évènements
 	goUp = false
 	goDown = false
 	goLeft = false
@@ -103,9 +113,9 @@ end
 function love.draw()
    -- 
    --
-   for i=-10, 10 do
-      for j=-10, 10 do
-         p = hex_coord(i, j, hrad, true)
+   for i=-nh, nh do
+      for j=-nh, nh do
+         p = hex_coord(i, j, hrad, false)
          inHex = draw_hex(windowWidth/2+p[1],windowHeight/2+p[2], {125+i*10, 125+j*10, 255}, i, j)
 		 --
 		 if (click and inHex) then
@@ -118,10 +128,11 @@ function love.draw()
    end
 	-- 
 	if (hexSel ~= nil) then
-         p = hex_coord(hexSel[1], hexSel[2], hrad, true)
+         p = hex_coord(hexSel[1], hexSel[2], hrad, false)
          inHex = draw_hex(windowWidth/2+p[1],windowHeight/2+p[2], {0, 255, 0}, hexSel[1], hexSel[2])
 	end
    --
+   love.graphics.rectangle("line", hexmap_x,hexmap_y, hexmap_width, hexmap_height)
 end
 
 -- Callback function triggered when window receives or loses focus. Added since 0.7.0  
