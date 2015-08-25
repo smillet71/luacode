@@ -1,3 +1,16 @@
+require('lovedebug')
+require "hexagon"
+
+-- quelques variables globales...
+xm = 0
+ym = 0
+click = false
+hexSel = nil
+
+-- distance entre 2 points x, y
+function dist2d(x0, y0, x1, y1)
+	return math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0))
+end
 
 -- draw an Image
 function drawImage(img, x, y)
@@ -50,60 +63,76 @@ end
 
 -- This function is called exactly once at the beginning of the game.   
 function love.load(arg)
-   windowWidth = love.window.getWidth( )
-   windowHeight = love.window.getHeight( )
-	print("window: ", windowWidth, "  ", windowHeight)
+	-- gestion mode graphique
+	local modes = love.window.getFullscreenModes()
+	table.sort(modes, function(a, b) return a.width*a.height < b.width*b.height end)
+	for i=1,#modes do
+      print("mode ",i,": ", modes[i].width, modes[i].height)
+	end
+	display_mode = modes[#modes]
+	love.window.setMode(display_mode.width, display_mode.height, {resizable=false, fullscreen=true})
+	love.resize(love.window.getWidth(), love.window.getHeight())
+	love.graphics.setFont(love.graphics.newFont(9))
+	-- constantes affichage
+	nh = math.floor(math.floor((display_mode.height/(hrad*math.sqrt(3))-3))/2)
+	-- hexmap graphics limits
+	hexmap_x = display_mode.width/2-hrad*math.sqrt(3)*(nh-0.75)
+	hexmap_y = display_mode.height/2-hrad*math.sqrt(3)*(nh+0.5)
+	hexmap_width = hrad*math.sqrt(3)*(nh-0.75)*2
+	hexmap_height = hrad*math.sqrt(3)*(nh+0.75)*2
+	-- constantes gestion évènements
 	goUp = false
 	goDown = false
 	goLeft = false
 	goRight = false
 end
 
+
+function draw_hex(x, y, color, i, j)
+	if (dist2d(x,y,xm,ym)<=hrad*math.sqrt(2/3)) then
+		color = {255,0,0}
+		inHex = true
+	else
+		inHex = false
+	end
+   love.graphics.push()
+   love.graphics.translate(x, y)
+   love.graphics.scale(1, 1)
+   love.graphics.setColor(color[1], color[2], color[3] )
+   love.graphics.polygon('line', hexp)
+   text = ""..i..","..j
+   love.graphics.printf(text, -hrad, -4, hrad*2,"center")
+   --love.graphics.circle("line", 0, 0, hrad*math.sqrt(2/3), 30)
+   love.graphics.pop()
+   --
+   return inHex
+end
+
+
 -- Callback function used to draw on the screen every frame.   
 function love.draw()
-
-	-- definition d'une pièce
-	room = { X=10, Y=10, W=20, H=10, doors = {{"H",10,10, false}, {"H", 3, 0, true}, {"V", 0,2, true}, {"V", 20,2, false}} }
-	-- facteur d'echelle
-	scale = 10
-	-- viewport
-	vp = {X=50, Y=50, W=350, H=350}
-
-	-- translate
-	love.graphics.push()
-	love.graphics.translate(vp.X,vp.Y)
-   	love.graphics.scale(scale, scale)
-
-   	-- room
-   	love.graphics.setColor( 255, 255, 255, 30 )
-   	love.graphics.rectangle("line", room.X, room.Y, room.W, room.H)
-   	love.graphics.setLineWidth( 1 )
-
-   	-- tracé des portes
-   	for i=1,#room.doors do
-   		--
-   		d = room.doors[i]
-   		love.graphics.setColor( 255, 255, 255, 30 )
-   		-- 
-   		if (d[1] == "V") then 
-   			love.graphics.rectangle("fill", room.X+d[2]-0.5, room.Y+d[3], 1, 2)
-   			love.graphics.print(i, room.X+d[2], room.Y+d[3])
-     		if (d[4]) then
- 				love.graphics.setColor( 0, 255, 0, 30 )
-   				love.graphics.rectangle("fill", room.X+d[2]-0.5, room.Y+d[3], 1, 2)
-   			end
-  		else
-  			love.graphics.rectangle("fill", room.X+d[2], room.Y+d[3]-0.5, 2, 1)
-    		love.graphics.print(i, room.X+d[2], room.Y+d[3])
-      		if (d[4]) then
- 				love.graphics.setColor( 0, 255, 0, 30 )
-   				love.graphics.rectangle("fill", room.X+d[2], room.Y+d[3]-0.5, 2, 1)
-   			end
- 		end
-    end
-   	--
-	love.graphics.pop()
-
+   -- 
+   --
+   for i=-nh, nh do
+      for j=-nh, nh do
+         p = hex_coord(i, j, hrad, false)
+         inHex = draw_hex(windowWidth/2+p[1],windowHeight/2+p[2], {125+i*10, 125+j*10, 255}, i, j)
+		 --
+		 if (click and inHex) then
+			print("hexSel ", i, j)
+			hexSel = {i, j}
+			inHex = false
+			click = false
+		 end
+      end
+   end
+	-- 
+	if (hexSel ~= nil) then
+         p = hex_coord(hexSel[1], hexSel[2], hrad, false)
+         inHex = draw_hex(windowWidth/2+p[1],windowHeight/2+p[2], {0, 255, 0}, hexSel[1], hexSel[2])
+	end
+   --
+   love.graphics.rectangle("line", hexmap_x,hexmap_y, hexmap_width, hexmap_height)
 end
 
 -- Callback function triggered when window receives or loses focus. Added since 0.7.0  
@@ -118,12 +147,13 @@ end
 
 -- Callback function triggered when the mouse is moved. Added since 0.9.2   
 function love.mousemoved(x, y, dx, dy)
-
+	xm = x
+	ym = y
 end
 
 -- Callback function triggered when a mouse button is pressed.   
 function love.mousepressed(x, y, button)
-
+	click = true
 end
 
 -- Callback function triggered when a mouse button is released.  
@@ -138,7 +168,10 @@ end
 
 -- Called when the window is resized. Added since 0.9.0   
 function love.resize(w, h) 
-
+   print("resize ", w, ",",h)
+   windowWidth = w
+   windowHeight = h
+   print("window: ", windowWidth, "  ", windowHeight)
 end
 
 -- Called when text has been entered by the user. Added since 0.9.0   
