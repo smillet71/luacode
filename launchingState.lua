@@ -1,5 +1,5 @@
 M = {}
-
+M.name = "launchingState"
 -----------------------------------------------------------------------------
 -- Enter this state
 function M:enter()
@@ -35,6 +35,9 @@ end
 
 -- Callback function triggered when a key is pressed.   
 function M:keypressed(key)
+   if key == "escape" then
+   	love.event.quit()
+   end
 end
 
 --Callback function triggered when a key is released.  
@@ -62,14 +65,24 @@ function M:mousereleased(x, y, button)
 end
 
 -----------------------------------------------------------------------------
-
+local T=0
 -- Callback function used to update the state of the game every frame.   
 function M:update(dt)
-
+	T = T+dt
+	if (T>10) then
+		return "mainMenuState"
+	else
+		return nil
+	end
 end
 
 -----------------------------------------------------------------------------
 
 -- Callback function used to draw on the screen every frame.   
 function M:draw()
+   love.graphics.setColor(255,0,0)
+   love.graphics.printf(self.name,50,10,100,"center")
 end
+
+-----------------------------------------------------------------------------
+return M
