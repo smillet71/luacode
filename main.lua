@@ -1,4 +1,4 @@
-require('lovedebug')
+require('externals/lovedebug')
 
 -- different application states
 local launchingState = require "launchingState"
