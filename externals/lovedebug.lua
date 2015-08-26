@@ -1,4 +1,8 @@
-﻿--local _Debug table for holding all variables
+﻿-- https://github.com/Ranguna/LOVEDEBUG.git
+-- LoveDebug - A whole new way of debugging your game, original created by kalle2990
+-- MIT License, Copyright (c) 2015 Luis Pais
+
+--local _Debug table for holding all variables
 local _Debug = {
 	errors = {},
 	prints = {},
