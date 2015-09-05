@@ -1,6 +1,9 @@
 M = {}
 M.name = "launchingState"
 -----------------------------------------------------------------------------
+local t=0
+local tMax=10
+-----------------------------------------------------------------------------
 -- Enter this state
 function M:enter()
 	print()
@@ -36,7 +39,9 @@ end
 -- Callback function triggered when a key is pressed.   
 function M:keypressed(key)
    if key == "escape" then
-   	love.event.quit()
+		love.event.quit()
+   elseif (key ~= nil) then
+		t = tMax
    end
 end
 
@@ -65,11 +70,10 @@ function M:mousereleased(x, y, button)
 end
 
 -----------------------------------------------------------------------------
-local T=0
 -- Callback function used to update the state of the game every frame.   
 function M:update(dt)
-	T = T+dt
-	if (T>10) then
+	t = t+dt
+	if (t>=tMax) then
 		return "mainMenuState"
 	else
 		return nil

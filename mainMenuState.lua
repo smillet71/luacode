@@ -2,8 +2,19 @@ M = {}
 M.name = "mainMenuState"
 
 -----------------------------------------------------------------------------
+require "utils.Menus"
+local mainMenu = {}
+-----------------------------------------------------------------------------
 -- Enter this state
 function M:enter()
+	n = 5
+	x = 100
+	y = 100
+	width = 200
+	height = 200
+	font = love.graphics.newFont(15)
+	color = {100,100,100,100}
+	mainMenu = Menu:new(n, x, y, width, height, font, color)
 	print()
 end
 
