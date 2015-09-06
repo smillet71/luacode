@@ -12,12 +12,12 @@ function Menu:new(n, x, y, width, height, font, color)
 	self.conf = {}
 	self.conf.font = font
 	self.conf.color = color
-	self.conf.fHeight = 8 --font.getHeight()
+	self.conf.fHeight = font:getHeight()
 	self.conf.x = x
 	self.conf.y = y
 	self.conf.width = width/2
 	self.conf.height = height
-	self.conf.dX = width/n
+	self.conf.dX = 0
 	self.conf.dY = height/n
 	if (self.conf.dY<=self.conf.fHeight) then
 		error("Menu: not enough place in area for configured number of items")
@@ -36,8 +36,8 @@ function Menu:addElement(name, key, func)
 	item.func = func
 	item.active = true
 	item.selected = false
-	item.x = self.conf.dY/2+(self.conf.dY*(self.nbItems))
-	item.y = self.conf.dX
+	item.x = self.conf.dX
+	item.y = self.conf.dY/2+(self.conf.dY*(self.nbItems-1))
 	self.items[self.nbItems] = item
 end
 
@@ -45,9 +45,10 @@ function Menu:display()
 	love.graphics.push()
 	love.graphics.translate(self.conf.x,self.conf.y)
 	love.graphics.setFont(self.conf.font)
+	love.graphics.rectangle("line",-5, 5,self.conf.width+10, self.conf.height+10) 
    	for i=1,self.nbItems do
 		item = self.items[i]
-		love.graphics.printf( item.name, item.x, item.y, self.conf.width, "center")
+		love.graphics.printf( item.name, item.x, item.y, self.conf.width, "left")
 	end
    	love.graphics.pop()
 

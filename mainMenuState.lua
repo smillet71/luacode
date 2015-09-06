@@ -1,6 +1,8 @@
+-----------------------------------------------------------------------------
+require "configuration"
+-----------------------------------------------------------------------------
 M = {}
 M.name = "mainMenuState"
-
 -----------------------------------------------------------------------------
 require "utils.Menus"
 local mainMenu = {}
@@ -10,12 +12,17 @@ function M:enter()
 	n = 5
 	x = 100
 	y = 100
-	width = 200
+	width = 400
 	height = 200
 	font = love.graphics.newFont(15)
 	color = {100,100,100,100}
+	font = getFonts().xl20
 	mainMenu = Menu:new(n, x, y, width, height, font, color)
-	print()
+	mainMenu:addElement("[C]ontinue", "C", function() end)	
+	mainMenu:addElement("[N]ew Game", "N", function() end)	
+	mainMenu:addElement("[L]oad Game", "L", function() end)
+	mainMenu:addElement("[C]onfiguration", "C", function() end)
+	mainMenu:addElement("[E]xit", "E", function() end)
 end
 
 -- Leave this state
@@ -89,6 +96,7 @@ end
 function M:draw()
    love.graphics.setColor(255,255,0)
    love.graphics.printf(self.name,50,10,100,"center")
+   mainMenu:display()
 end
 
 -----------------------------------------------------------------------------
