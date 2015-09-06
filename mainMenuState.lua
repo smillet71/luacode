@@ -6,24 +6,25 @@ M = {}
 M.name = "mainMenuState"
 -----------------------------------------------------------------------------
 local mainMenu = {}
+local loc = getLocalisation()
 -----------------------------------------------------------------------------
 -- Enter this state
 function M:enter()
 	n = 5
 	x = 100
 	y = 100
-	width = 510
+	width = 800
 	height = 350
 	font = love.graphics.newFont(15)
 	colorNotSel = getColors().NormalLowLightedText
 	colorSel = getColors().NormalHighLightedText
 	font = getFonts().xl30
 	mainMenu = Menu:new(n, x, y, width, height, font, colorNotSel, colorSel)
-	mainMenu:addElement("[C]ontinue", "C", function() print("Continue last game") end)	
-	mainMenu:addElement("[N]ew Game", "N", function() print("Create and launch new game") end)	
-	mainMenu:addElement("[L]oad Game", "L", function() print("Load old game") end)
-	mainMenu:addElement("[O]ptions", "O", function() print("Configure game") end)
-	mainMenu:addElement("[E]xit", "E", function() love.event.quit() end)
+	mainMenu:addElement(loc.mainMenu.contGame, function() print("Continue last game") end)	
+	mainMenu:addElement(loc.mainMenu.newGame, function() print("Create and launch new game") end)	
+	mainMenu:addElement(loc.mainMenu.loadGame, function() print("Load old game") end)
+	mainMenu:addElement(loc.mainMenu.options, function() print("Configure game") end)
+	mainMenu:addElement(loc.mainMenu.quit, function() love.event.quit() end)
 	mainMenu.visible = true
 end
 

@@ -2,14 +2,15 @@
 M = {}
 
 -----------------------------------------------------------------
-M.title = "Test Application"
+M.title = "Quelques tests !"
 --
 M.mainMenu = {}
 M.mainMenu.title = M.title
-M.mainMenu.newGame = "New"
-M.mainMenu.loadGame = "Load"
-M.mainMenu.options = "Options"
-M.mainMenu.quit = "Quit"
+M.mainMenu.contGame = "[P]artie en cours"
+M.mainMenu.newGame = "[N]ouvelle partie Jeu"
+M.mainMenu.loadGame = "[C]harger une partie"
+M.mainMenu.options = "[O]ptions"
+M.mainMenu.quit = "[Q]uitter"
 --
 M.optionsMenu = {}
 M.optionsMenu.title = "Configuration"

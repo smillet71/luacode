@@ -2,6 +2,11 @@
 
 Menu = {}
 
+-- Extract key from item name
+function getKeyFromName(name)
+
+end
+
 -- Create a Menu
 function Menu:new(n, x, y, width, height, font, colorNotSel, colorSel)
     o = {}
@@ -31,14 +36,16 @@ function Menu:new(n, x, y, width, height, font, colorNotSel, colorSel)
 end
 
 -- add a Menu Item
-function Menu:addElement(name, key, func)
+function Menu:addElement(name, func)
 	if (self.nbItems>=self.nbMax) then
 		error("Menu: max number of items reached")
 	end
 	self.nbItems = self.nbItems+1
 	item = {}
 	item.name = name
-	self.keys[string.lower(key)]  = self.nbItems 
+	ikey = name:find("%[")+1
+	key = string.lower(name:sub(ikey,ikey))
+	self.keys[key]  = self.nbItems 
 	item.func = func
 	item.selected = false
 	item.x = self.conf.dX+20
@@ -54,7 +61,7 @@ function Menu:display()
 	love.graphics.push()
 	love.graphics.translate(self.conf.x,self.conf.y)
 	love.graphics.setFont(self.conf.font)
-	love.graphics.rectangle("line",-5, 5,self.conf.width+10, self.conf.height+10) 
+	love.graphics.rectangle("fill",-5, 5, 5, self.conf.height+10) 
    	for i=1,self.nbItems do
 		if (i ==  self.selected) then
 			love.graphics.setColor(	self.conf.colorSel[1], self.conf.colorSel[2],
