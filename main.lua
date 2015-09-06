@@ -1,4 +1,5 @@
 require('externals/lovedebug')
+require("configuration")
 
 -- different application states
 local launchingState = require "launchingState"

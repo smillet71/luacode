@@ -1,10 +1,10 @@
 -----------------------------------------------------------------------------
 require "configuration"
+require "utils.Menus"
 -----------------------------------------------------------------------------
 M = {}
 M.name = "mainMenuState"
 -----------------------------------------------------------------------------
-require "utils.Menus"
 local mainMenu = {}
 -----------------------------------------------------------------------------
 -- Enter this state
@@ -12,17 +12,19 @@ function M:enter()
 	n = 5
 	x = 100
 	y = 100
-	width = 400
-	height = 200
+	width = 510
+	height = 350
 	font = love.graphics.newFont(15)
-	color = {100,100,100,100}
-	font = getFonts().xl20
-	mainMenu = Menu:new(n, x, y, width, height, font, color)
-	mainMenu:addElement("[C]ontinue", "C", function() end)	
-	mainMenu:addElement("[N]ew Game", "N", function() end)	
-	mainMenu:addElement("[L]oad Game", "L", function() end)
-	mainMenu:addElement("[C]onfiguration", "C", function() end)
-	mainMenu:addElement("[E]xit", "E", function() end)
+	colorNotSel = getColors().NormalLowLightedText
+	colorSel = getColors().NormalHighLightedText
+	font = getFonts().xl30
+	mainMenu = Menu:new(n, x, y, width, height, font, colorNotSel, colorSel)
+	mainMenu:addElement("[C]ontinue", "C", function() print("Continue last game") end)	
+	mainMenu:addElement("[N]ew Game", "N", function() print("Create and launch new game") end)	
+	mainMenu:addElement("[L]oad Game", "L", function() print("Load old game") end)
+	mainMenu:addElement("[O]ptions", "O", function() print("Configure game") end)
+	mainMenu:addElement("[E]xit", "E", function() love.event.quit() end)
+	mainMenu.visible = true
 end
 
 -- Leave this state
@@ -56,6 +58,8 @@ end
 function M:keypressed(key)
    if key == "escape" then
    	love.event.quit()
+   else 
+	mainMenu:keypressed(key)
    end
 end
 
@@ -94,8 +98,11 @@ end
 
 -- Callback function used to draw on the screen every frame.   
 function M:draw()
-   love.graphics.setColor(255,255,0)
-   love.graphics.printf(self.name,50,10,100,"center")
+   color = getColors().Title
+   font = getFonts().b40
+   love.graphics.setFont(font)
+   love.graphics.setColor(color[1], color[2], color[3], color[4])
+   love.graphics.printf(self.name,50,10,100,"left")
    mainMenu:display()
 end
 
